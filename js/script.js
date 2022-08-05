@@ -6,9 +6,10 @@ const startScreen = document.querySelector("#start-screen");
 const gameOverScreen = document.querySelector("#game-over");
 const startBtn = document.querySelector("#start-button");
 const restartBtn = document.querySelector("#restart-button");
+let scoreElementGameOver = document.querySelector("#score-gameover");
+let scoreElement = document.querySelector("#score");
 
 //variables
-let scoreElement = document.querySelector("#score");
 let score = 0;
 let intervalId = 0;
 let isGameOver = false;
@@ -21,7 +22,7 @@ bird.src = "../images/flappy.png";
 let birdX = 50;
 let birdY = 50;
 let birdSize = 60;
-let birdSpeed = 2;
+let birdSpeed = 4;
 let falling = true;
 
 const pipeTop = new Image();
@@ -32,7 +33,7 @@ pipeBottom.src = "../images/obstacle_bottom.png";
 const pipeGap = 250;
 const pipeWidth = 100;
 const pipeHeight = 500;
-let pipeSpeed = 2;
+let pipeSpeed = 4;
 let pipeTopY = 0;
 let pipeBottomY = pipeTopY + pipeHeight + pipeGap;
 let pipeX = 300;
@@ -52,6 +53,7 @@ window.onload = function () {
   };
   restartBtn.onclick = function () {
     //reset all variables
+    score = 0;
     intervalId = 0;
     isGameOver = false;
     birdX = 50;
@@ -71,11 +73,17 @@ window.onload = function () {
       handleFly();
     }
   });
+  document.addEventListener("mousedown", () => {
+    falling = false;
+    handleFly();
+  });
 
   function startGame() {
     gameScreen.style.display = "flex";
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
     ctx.drawImage(bird, birdX, birdY, birdSize, birdSize);
+    bird.classList.add("falling");
+    bird.style.width = "100px";
 
     //bird is always falling
     if (falling) {
@@ -134,7 +142,7 @@ window.onload = function () {
     }
 
     //if bird touches bottom or top of canvas, game is over
-    if (birdY < 0 || birdY + birdSize > canvas.height) isGameOver = true;
+    if (birdY < 0 || birdY + birdSize > canvas.height) isGameOver = false;
 
     if (isGameOver) {
       gameOver();
@@ -159,9 +167,9 @@ window.onload = function () {
   function gameOver() {
     cancelAnimationFrame(intervalId);
     canvas.style.display = "none";
-    gameOverScreen.style.display = "block";
+    gameOverScreen.style.display = "flex";
     gameScreen.style.display = "none";
-    score = 0;
+    scoreElementGameOver.innerText = score;
   }
 
   function handleFly() {

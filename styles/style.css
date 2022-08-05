@@ -3,23 +3,24 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: rgb(133, 255, 194);
 }
 
-body h1 {
+h1 {
   font-size: 30px;
   text-transform: uppercase;
 }
 
-#start-button {
-  font-size: 20px;
-  background-color: black;
-  color: #fff;
-  padding: 10px 20px;
-  border: 0;
-  box-shadow: 0;
-  border-radius: 5px;
-  margin-bottom: 20px;
+h3 {
+  padding: 0;
+  margin: 5px;
+  color: green;
+  font-size: 4rem;
+  font-family: "Press Start 2P", cursive;
+  margin: 20px;
 }
+
+#start-button,
 #restart-button {
   font-size: 20px;
   background-color: black;
@@ -29,6 +30,12 @@ body h1 {
   box-shadow: 0;
   border-radius: 5px;
   margin-bottom: 20px;
+  transition: 0.5s;
+}
+#start-button:hover,
+#restart-button:hover {
+  background-color: rgb(14, 152, 60);
+  box-shadow: 0 0 20px grey;
 }
 
 #game-screen {
@@ -37,9 +44,18 @@ body h1 {
   justify-content: center;
   flex-direction: column;
 }
-#score-div h3 {
-  padding: 0;
-  margin: 10px;
-  color: green;
-  font-size: 3rem;
+
+#game-over,
+#start-screen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.falling {
+  width: 500px;
+  transform: rotate(90deg);
 }
