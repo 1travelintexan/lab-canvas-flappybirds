@@ -16,13 +16,33 @@ let isGameOver = false;
 
 const background = new Image();
 background.src = "../images/bg.png";
+let background1x = 0;
+let background2x = canvas.width;
+const background2 = new Image();
+background2.src = "../images/bg.png";
 
-const bird = new Image();
-bird.src = "../images/flappy.png";
-let birdX = 50;
-let birdY = 50;
-let birdSize = 60;
-let birdSpeed = 4;
+const bee = new Image();
+let beeIndex = 0;
+const sprites = [
+  "../images/bee-sprites/sprites/skeleton-animation_00.png",
+  "../images/bee-sprites/sprites/skeleton-animation_01.png",
+  "../images/bee-sprites/sprites/skeleton-animation_02.png",
+  "../images/bee-sprites/sprites/skeleton-animation_03.png",
+  "../images/bee-sprites/sprites/skeleton-animation_04.png",
+  "../images/bee-sprites/sprites/skeleton-animation_05.png",
+  "../images/bee-sprites/sprites/skeleton-animation_06.png",
+  "../images/bee-sprites/sprites/skeleton-animation_07.png",
+  "../images/bee-sprites/sprites/skeleton-animation_08.png",
+  "../images/bee-sprites/sprites/skeleton-animation_09.png",
+  "../images/bee-sprites/sprites/skeleton-animation_10.png",
+  "../images/bee-sprites/sprites/skeleton-animation_11.png",
+  "../images/bee-sprites/sprites/skeleton-animation_12.png",
+];
+bee.src = sprites[beeIndex];
+let beeX = 100;
+let beeY = 100;
+let beeSize = 60;
+let beeSpeed = 5;
 let falling = true;
 
 const pipeTop = new Image();
@@ -33,7 +53,7 @@ pipeBottom.src = "../images/obstacle_bottom.png";
 const pipeGap = 250;
 const pipeWidth = 100;
 const pipeHeight = 500;
-let pipeSpeed = 4;
+let pipeSpeed = 5;
 let pipeTopY = 0;
 let pipeBottomY = pipeTopY + pipeHeight + pipeGap;
 let pipeX = 300;
@@ -56,8 +76,8 @@ window.onload = function () {
     score = 0;
     intervalId = 0;
     isGameOver = false;
-    birdX = 50;
-    birdY = 50;
+    beeX = 50;
+    beeY = 50;
     pipeArray = [
       { x: canvas.width + 100, y: -Math.floor(Math.random() * pipeHeight) },
       { x: canvas.width + 500, y: -Math.floor(Math.random() * pipeHeight) },
@@ -80,16 +100,32 @@ window.onload = function () {
 
   function startGame() {
     gameScreen.style.display = "flex";
-    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-    ctx.drawImage(bird, birdX, birdY, birdSize, birdSize);
-    bird.classList.add("falling");
-    bird.style.width = "100px";
 
-    //bird is always falling
+    //moving background, cycling through two backgrounds to appear to be moving
+    ctx.drawImage(background, background1x, 0, canvas.width, canvas.height);
+    ctx.drawImage(background2, background2x, 0, canvas.width, canvas.height);
+    background1x -= beeSpeed;
+    background2x -= beeSpeed;
+    if (background1x < -canvas.width) background1x = canvas.width;
+    if (background2x < -canvas.width) background2x = canvas.width;
+
+    //drawing bee and cycling through sprites
+    ctx.drawImage(bee, beeX, beeY, beeSize, beeSize);
+    if (intervalId % 3 === 0) {
+      for (let i = 0; i < sprites.length; i++) {
+        if (beeIndex == 12) {
+          beeIndex = 0;
+        }
+        beeIndex += 1;
+        bee.src = sprites[beeIndex];
+      }
+    }
+
+    //bee is always falling
     if (falling) {
-      birdY += birdSpeed;
+      beeY += beeSpeed;
     } else {
-      birdY -= birdSpeed + 2;
+      beeY -= beeSpeed + 2;
     }
 
     //for loop for pipes array
@@ -119,8 +155,8 @@ window.onload = function () {
 
       //score increase
       if (
-        currentPipe.x + pipeWidth <= birdX &&
-        currentPipe.x + pipeWidth > birdX - pipeSpeed
+        currentPipe.x + pipeWidth <= beeX &&
+        currentPipe.x + pipeWidth > beeX - pipeSpeed
       ) {
         score++;
         scoreElement.innerText = score;
@@ -129,20 +165,20 @@ window.onload = function () {
       //collisions with pipes
       if (
         //collision with top pipe
-        (birdX + birdSize >= currentPipe.x &&
-          birdY <= currentPipe.y + pipeHeight &&
-          birdX <= currentPipe.x + pipeWidth) ||
+        (beeX + beeSize >= currentPipe.x &&
+          beeY <= currentPipe.y + pipeHeight &&
+          beeX <= currentPipe.x + pipeWidth) ||
         //collision with bottom pipe
-        (birdX + birdSize >= currentPipe.x &&
-          birdY + birdSize >= currentPipe.y + pipeHeight + pipeGap &&
-          birdX <= currentPipe.x + pipeWidth)
+        (beeX + beeSize >= currentPipe.x &&
+          beeY + beeSize >= currentPipe.y + pipeHeight + pipeGap &&
+          beeX <= currentPipe.x + pipeWidth)
       ) {
         isGameOver = true;
       }
     }
 
-    //if bird touches bottom or top of canvas, game is over
-    if (birdY < 0 || birdY + birdSize > canvas.height) isGameOver = false;
+    //if bee touches bottom or top of canvas, game is over
+    if (beeY < 0 || beeY + beeSize > canvas.height) isGameOver = true;
 
     if (isGameOver) {
       gameOver();
@@ -175,6 +211,6 @@ window.onload = function () {
   function handleFly() {
     setTimeout(() => {
       falling = true;
-    }, 200);
+    }, 150);
   }
 };
